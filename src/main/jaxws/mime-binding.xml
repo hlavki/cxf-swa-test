@@ -22,7 +22,7 @@
           xmlns="http://java.sun.com/xml/ns/jaxws"
           wsdlLocation="../resources/META-INF/wsdl/crawler.wsdl">
 
-    <bindings node="wsdl:definitions/wsdl:binding[@name='CrawlerServiceBinding']/wsdl:operation[@name='addEntry']">
+    <bindings node="wsdl:definitions"> <!-- /wsdl:binding[@name='CrawlerServiceBinding']/wsdl:operation[@name='addEntry']">   -->
         <enableMIMEContent>true</enableMIMEContent>
     </bindings>
 </bindings>

@@ -54,7 +54,7 @@
     </wsdl:message>
 
     <wsdl:message name="addEntryResponse">
-        <wsdl:part name="parameters" element="tns:addEntryResponse"/>
+        <wsdl:part name="response" element="tns:addEntryResponse"/>
     </wsdl:message>
 
     <wsdl:portType name="CrawlerServicePort">
@@ -67,9 +67,8 @@
 
     <wsdl:binding name="CrawlerServiceBinding" type="tns:CrawlerServicePort">
         <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
-
         <wsdl:operation name="addEntry">
-            <soap:operation style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+            <soap:operation style="document" soapAction="" />
             <wsdl:input>
                 <mime:multipartRelated>
                     <mime:part>
@@ -81,7 +80,7 @@
                 </mime:multipartRelated>
             </wsdl:input>
             <wsdl:output>
-                <soap:body use="literal"/>
+                <soap:body parts="response" use="literal"/>
             </wsdl:output>
             <wsdl:fault name="systemFault">
                 <soap:fault use="literal" name="systemFault"/>
@@ -91,7 +90,7 @@
 
     <wsdl:service name="CrawlerService">
         <wsdl:port binding="tns:CrawlerServiceBinding" name="CrawlerServicePort">
-            <soap:address location="http://www.example.org/"/>
+            <soap:address location="hohoho"/>
         </wsdl:port>
     </wsdl:service>
 
