@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<wsdl:definitions
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:tns="http://search.legand.sk/crawler/soap/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+    xmlns:xmime="http://www.w3.org/2005/05/xmlmime"
+    name="crawler-schema"
+    targetNamespace="http://search.legand.sk/crawler/soap/">
+
+    <wsdl:types>
+        <xsd:schema targetNamespace="http://search.legand.sk/crawler/soap/">
+            <xsd:complexType name="SystemError">
+                <xsd:sequence>
+                    <xsd:element name="code" type="xsd:string" minOccurs="0"/>
+                    <xsd:element name="message" type="xsd:string" minOccurs="0"/>
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="Metadata">
+                <xsd:sequence>
+                    <xsd:element name="attribute" type="tns:Attribute" minOccurs="0" maxOccurs="unbounded"/>
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="Attribute">
+                <xsd:sequence>
+                    <xsd:element name="value" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
+                </xsd:sequence>
+                <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+
+            <xsd:complexType name="InjectionEntry">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Reprezentuje položku/dokument, ktorá bude indexovaná. Káždá položka/dokument je jednoznačne
+                        identifikovaná svojou uri. Ak ide o číselný identifikátor, tak je možné zapísať napr: id:123,
+                        kde 123 je jednoznačný identifikátor. Ak zdrojový systém podporuje hierarchické položky, tak
+                        parentUri bude obsahovať URI rodičovskej položky/dokumentu a depth zase úroveň vnorenia.
+                        Element metadata obsahuje zoznam všetkých meta údajov položky/dokumentu (napr. názov dokumentu,
+                        veľkosť, ACL, atď.)
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:sequence>
+                    <xsd:element name="uri" type="xsd:string" />
+                    <xsd:element name="parentUri" type="xsd:string"  minOccurs="0" />
+                    <xsd:element name="depth" type="xsd:int" minOccurs="0" />
+                    <xsd:element ref="tns:metadata" minOccurs="0" />
+                    <!--<xsd:element name="content" type="xsd:base64Binary" minOccurs="0" xmime:expectedContentTypes="*/*" />-->
+                    <xsd:element name="attachments" type="tns:Attachment" minOccurs="0" maxOccurs="unbounded" />
+                </xsd:sequence>
+            </xsd:complexType>
+
+            <xsd:complexType name="Attachment">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        Reprezentuje dátovú prílohu, ktorá obsahuje metaúdaj názov a binárny obsah.
+                    </xsd:documentation>
+                </xsd:annotation>
+                <xsd:sequence>
+                    <xsd:element name="content" type="xsd:base64Binary" xmime:expectedContentTypes="*/*"/>
+                </xsd:sequence>
+                <xsd:attribute name="filename" type="xsd:string"/>
+            </xsd:complexType>
+
+            <xsd:element name="systemFault" type="tns:SystemError"/>
+
+            <xsd:element name="addEntry">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="entry" type="tns:InjectionEntry"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="addEntryResponse">
+                <xsd:complexType>
+                    <xsd:sequence />
+                </xsd:complexType>
+            </xsd:element>
+
+            <xsd:element name="metadata" type="tns:Metadata"/>
+        </xsd:schema>
+    </wsdl:types>
+
+    <wsdl:message name="systemFault">
+        <wsdl:part name="fault" element="tns:systemFault"/>
+    </wsdl:message>
+
+    <wsdl:message name="addEntry">
+        <wsdl:part name="parameters" element="tns:addEntry"/>
+        <wsdl:part name="content" type="xsd:base64Binary"/>
+    </wsdl:message>
+
+    <wsdl:message name="addEntryResponse">
+        <wsdl:part name="parameters" element="tns:addEntryResponse"/>
+    </wsdl:message>
+
+    <wsdl:portType name="CrawlerServicePort">
+        <wsdl:operation name="addEntry">
+            <wsdl:input message="tns:addEntry"/>
+            <wsdl:output message="tns:addEntryResponse"/>
+            <wsdl:fault name="systemFault" message="tns:systemFault"/>
+        </wsdl:operation>
+    </wsdl:portType>
+
+    <wsdl:binding name="CrawlerServiceBinding" type="tns:CrawlerServicePort">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+        <wsdl:operation name="addEntry">
+            <soap:operation style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+            <wsdl:input>
+                <mime:multipartRelated>
+                    <mime:part>
+                        <soap:body parts="parameters" use="literal"/>
+                    </mime:part>
+                    <mime:part>
+                        <mime:content part="content" type="application/octet-stream"/>
+                    </mime:part>
+                </mime:multipartRelated>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+            <wsdl:fault name="systemFault">
+                <soap:fault use="literal" name="systemFault"/>
+            </wsdl:fault>
+        </wsdl:operation>
+    </wsdl:binding>
+
+    <wsdl:service name="CrawlerService">
+        <wsdl:port binding="tns:CrawlerServiceBinding" name="CrawlerServicePort">
+            <soap:address location="http://www.example.org/"/>
+        </wsdl:port>
+    </wsdl:service>
+
+</wsdl:definitions>
