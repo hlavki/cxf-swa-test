@@ -18,50 +18,12 @@
                 </xsd:sequence>
             </xsd:complexType>
 
-            <xsd:complexType name="Metadata">
-                <xsd:sequence>
-                    <xsd:element name="attribute" type="tns:Attribute" minOccurs="0" maxOccurs="unbounded"/>
-                </xsd:sequence>
-            </xsd:complexType>
-
-            <xsd:complexType name="Attribute">
-                <xsd:sequence>
-                    <xsd:element name="value" type="xsd:string" minOccurs="0" maxOccurs="unbounded"/>
-                </xsd:sequence>
-                <xsd:attribute name="name" type="xsd:string"/>
-            </xsd:complexType>
-
             <xsd:complexType name="InjectionEntry">
-                <xsd:annotation>
-                    <xsd:documentation>
-                        Reprezentuje položku/dokument, ktorá bude indexovaná. Káždá položka/dokument je jednoznačne
-                        identifikovaná svojou uri. Ak ide o číselný identifikátor, tak je možné zapísať napr: id:123,
-                        kde 123 je jednoznačný identifikátor. Ak zdrojový systém podporuje hierarchické položky, tak
-                        parentUri bude obsahovať URI rodičovskej položky/dokumentu a depth zase úroveň vnorenia.
-                        Element metadata obsahuje zoznam všetkých meta údajov položky/dokumentu (napr. názov dokumentu,
-                        veľkosť, ACL, atď.)
-                    </xsd:documentation>
-                </xsd:annotation>
                 <xsd:sequence>
                     <xsd:element name="uri" type="xsd:string" />
                     <xsd:element name="parentUri" type="xsd:string"  minOccurs="0" />
                     <xsd:element name="depth" type="xsd:int" minOccurs="0" />
-                    <xsd:element ref="tns:metadata" minOccurs="0" />
-                    <!--<xsd:element name="content" type="xsd:base64Binary" minOccurs="0" xmime:expectedContentTypes="*/*" />-->
-                    <xsd:element name="attachments" type="tns:Attachment" minOccurs="0" maxOccurs="unbounded" />
                 </xsd:sequence>
-            </xsd:complexType>
-
-            <xsd:complexType name="Attachment">
-                <xsd:annotation>
-                    <xsd:documentation>
-                        Reprezentuje dátovú prílohu, ktorá obsahuje metaúdaj názov a binárny obsah.
-                    </xsd:documentation>
-                </xsd:annotation>
-                <xsd:sequence>
-                    <xsd:element name="content" type="xsd:base64Binary" xmime:expectedContentTypes="*/*"/>
-                </xsd:sequence>
-                <xsd:attribute name="filename" type="xsd:string"/>
             </xsd:complexType>
 
             <xsd:element name="systemFault" type="tns:SystemError"/>
@@ -79,8 +41,6 @@
                     <xsd:sequence />
                 </xsd:complexType>
             </xsd:element>
-
-            <xsd:element name="metadata" type="tns:Metadata"/>
         </xsd:schema>
     </wsdl:types>
 

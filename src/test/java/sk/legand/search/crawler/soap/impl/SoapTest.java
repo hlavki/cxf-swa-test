@@ -11,11 +11,9 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import sk.legand.search.crawler.soap.AddEntry;
-import sk.legand.search.crawler.soap.Attribute;
 import sk.legand.search.crawler.soap.CrawlerService;
 import sk.legand.search.crawler.soap.CrawlerServicePort;
 import sk.legand.search.crawler.soap.InjectionEntry;
-import sk.legand.search.crawler.soap.Metadata;
 
 public class SoapTest {
 
@@ -67,16 +65,8 @@ public class SoapTest {
 
         InjectionEntry entry = new InjectionEntry();
         entry.setUri("id:1");
-        Metadata metadata = new Metadata();
-        Attribute attr = new Attribute();
-        attr.setName("filename");
-        attr.getValue().add("pica.pdf");
-        metadata.getAttribute().add(attr);
-        entry.setMetadata(metadata);
 
         params.setEntry(entry);
-
-//        byte[] content = (Files.readAllBytes(Paths.get("/data/home/hlavki/dms_search_wFrames_2o190313.pdf")));
 
         port.addEntry(params, new DataHandler(new FileDataSource("src/test/resources/sample.pdf")));
     }
